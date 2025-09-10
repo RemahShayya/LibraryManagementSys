@@ -22,6 +22,40 @@ namespace LibraryManagementSystem.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("LibraryManagementSystem.Data.Entities.BookRentals", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RentEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RentStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("BookRentals");
+                });
+
             modelBuilder.Entity("LibraryManagementSystem.Data.Entities.ImageEntities.AuthorImage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -61,6 +95,53 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("BookImages");
+                });
+
+            modelBuilder.Entity("LibraryManagementSystem.Data.Entities.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "b6c3f3d1-6a0d-4b7c-b5cb-1a0f83c0f184",
+                            Description = "Administrator role with full permissions",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "d9f02e77-4f3c-4a91-b4a7-0f8f9d9cc55d",
+                            Description = "Customer role with limited permissions",
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        });
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.Data.Identity.User", b =>
@@ -201,6 +282,9 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.Property<Guid?>("PublisherId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -273,33 +357,6 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Publishers");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -408,6 +465,25 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("LibraryManagementSystem.Data.Entities.BookRentals", b =>
+                {
+                    b.HasOne("LibraryManagmentSystem.Entities.Book", "Book")
+                        .WithMany("BookRentals")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LibraryManagementSystem.Data.Identity.User", "Customer")
+                        .WithMany("BookRentals")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("LibraryManagementSystem.Data.Entities.ImageEntities.AuthorImage", b =>
                 {
                     b.HasOne("LibraryManagmentSystem.Entities.Author", "Author")
@@ -471,7 +547,7 @@ namespace LibraryManagementSystem.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("LibraryManagementSystem.Data.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -498,7 +574,7 @@ namespace LibraryManagementSystem.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("LibraryManagementSystem.Data.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -520,6 +596,11 @@ namespace LibraryManagementSystem.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("LibraryManagementSystem.Data.Identity.User", b =>
+                {
+                    b.Navigation("BookRentals");
+                });
+
             modelBuilder.Entity("LibraryManagmentSystem.Entities.Author", b =>
                 {
                     b.Navigation("AuthorImage")
@@ -534,6 +615,8 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.Navigation("BookCategories");
 
                     b.Navigation("BookImages");
+
+                    b.Navigation("BookRentals");
                 });
 
             modelBuilder.Entity("LibraryManagmentSystem.Entities.Category", b =>

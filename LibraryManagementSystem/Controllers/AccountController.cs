@@ -34,7 +34,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<UserDTO>> login(CreatedLoginRequest request)
+        public async Task<ActionResult<UserDTO>> login(CreateLoginRequest request)
         {
             var user = await userManager.FindByNameAsync(request.Username);
             if (user == null) return Unauthorized("Invalid Username or Password");
@@ -42,14 +42,24 @@ namespace LibraryManagementSystem.API.Controllers
             var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, false);
             if (!result.Succeeded) return Unauthorized("Invalid Username or Password!");
 
-            return CreateApplicationUserDTO(user);
+            return await CreateApplicationUserDTO(user);
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> register(CreatedRegisterRequest request)
+        public async Task<IActionResult> Register(CreatedRegisterRequest request)
         {
+
             var checkEmail = await CheckIfEmailExist(request.Email);
-            if (checkEmail == true) return Unauthorized($"An existing account is using {request.Email}");
+            if (checkEmail)
+                return Unauthorized($"An existing account is using {request.Email}");
+
+            // Validate role before creating user
+            var allowedRoles = new List<string> { "Admin", "Customer" };
+            if (!allowedRoles.Contains(request.Role))
+            {
+                return BadRequest($"Invalid role: {request.Role}");
+            }
+
             var addedUser = new User()
             {
                 FirstName = request.Firstname.ToLower(),
@@ -57,14 +67,23 @@ namespace LibraryManagementSystem.API.Controllers
                 Email = request.Email.ToLower(),
                 UserName = request.Email.ToLower()
             };
+
             var result = await userManager.CreateAsync(addedUser, request.Password);
-            if (!result.Succeeded) return BadRequest(result.Errors);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            var roleToAssign = request.Role == "Admin" ? "Admin" : "Customer";
+            await userManager.AddToRoleAsync(addedUser, roleToAssign);
 
             try
             {
                 if (await SendConfirmationEmailAsync(addedUser))
                 {
-                    return Ok(new { title = "Account Created", message = "Your account has been created, you can login, please confirm your email address" });
+                    return Ok(new
+                    {
+                        title = "Account Created",
+                        message = "Your account has been created, you can login, please confirm your email address"
+                    });
                 }
                 return BadRequest("Failed to send email!");
             }
@@ -73,6 +92,7 @@ namespace LibraryManagementSystem.API.Controllers
                 return BadRequest("Failed to send email!");
             }
         }
+
 
         [HttpPut("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDTO model)
@@ -83,7 +103,8 @@ namespace LibraryManagementSystem.API.Controllers
 
             try
             {
-                var result = await userManager.ConfirmEmailAsync(user, model.Token);
+                var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(model.Token));
+                var result = await userManager.ConfirmEmailAsync(user, decodedToken);
 
                 if (result.Succeeded)
                 {
@@ -173,13 +194,13 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         #region
-        private UserDTO CreateApplicationUserDTO(User user)
+        private async Task<UserDTO> CreateApplicationUserDTO(User user)
         {
             return new UserDTO
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                JWT = jwtService.CreateJWT(user)
+                JWT = await jwtService.CreateJWT(user)
             };
         }
 
@@ -191,7 +212,8 @@ namespace LibraryManagementSystem.API.Controllers
         private async Task<bool> SendConfirmationEmailAsync(User user)
         {
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"{configuration["JWT:ClientURL"]}/{configuration["Email:ConfirmationEmailPath"]}?token={token}&email={user.Email}";
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            var confirmationLink = $"{configuration["JWT:ClientURL"]}/{configuration["Email:ConfirmationEmailPath"]}?token={encodedToken}&email={user.Email}";
             var body = $"<p>Hello:{user.FirstName}</p>" +
                 "<p>Please confirm your email address by clicking on the following link.</p>" +
                 $"<p><a href=\"{confirmationLink}\">Click here</a></p>" +

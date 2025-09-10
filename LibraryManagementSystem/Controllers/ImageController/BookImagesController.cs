@@ -4,6 +4,7 @@ using LibraryManagementSystem.API.Services;
 using LibraryManagementSystem.API.Services.IServices;
 using LibraryManagementSystem.Data.DTO;
 using LibraryManagementSystem.Data.Entities.ImageEntities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpPost("Upload")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ImageBookDTO>> SaveImageFile(IFormFile file, Guid bookId)
         {
             var book = await bookService.GetBookById(bookId);
@@ -61,6 +63,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<ImageBookDTO>> GetImage(Guid id)
         {
             var bookImage = await bookImageService.GetBookImagesById(id);
@@ -72,6 +75,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<ImageBookDTO>>> GetAllImages([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var images = await bookImageService.GetAllBookImages();
@@ -82,6 +86,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateImage(Guid id, IFormFile newFile)
         {
             var existingImage = await bookImageService.GetBookImagesById(id);
@@ -100,6 +105,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {
             var existingImage = await bookImageService.GetBookImagesById(id);

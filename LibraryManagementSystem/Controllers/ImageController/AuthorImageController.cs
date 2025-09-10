@@ -3,6 +3,7 @@ using LibraryManagementSystem.API.DTO;
 using LibraryManagementSystem.API.Services;
 using LibraryManagementSystem.API.Services.IServices;
 using LibraryManagementSystem.Data.Entities.ImageEntities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<ImageAuthorDTO>> GetImage(Guid id)
         {
             var authorImage = await authorImageService.GetAuthorImageById(id);
@@ -68,6 +70,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<ImageAuthorDTO>>> GetAllImages([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var images = await authorImageService.GetAllAuthorsImages();
@@ -78,6 +81,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateImage(Guid id, IFormFile newFile)
         {
             var existingImage = await authorImageService.GetAuthorImageById(id);
@@ -96,6 +100,7 @@ namespace LibraryManagementSystem.API.Controllers.ImageController
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteImage(Guid id)
         {
             var existingImage = await authorImageService.GetAuthorImageById(id);

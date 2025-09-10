@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Data.DTO;
 using LibraryManagementSystem.Data.DTO.Requests;
 using Serilog;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryManagementSystem.API.Controllers
 {
@@ -21,6 +22,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PublisherDTO>> AddPublisher([FromBody] CreatePublisherRequest request)
         {
             var publisher = mapper.Map<Publisher>(request);
@@ -35,6 +37,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("sorted")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<PublisherDTO>>> GetAllPublishersSorted([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             IEnumerable<Publisher> publishers = await publisherService.GetAllPublishers();
@@ -45,6 +48,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("filter")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<PublisherDTO>>> GetPublishersFiltered(string? search, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             IEnumerable<Publisher> publishers=await publisherService.GetAllPublishers();
@@ -63,6 +67,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("{Id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<PublisherDTO>> GetPublisherById(Guid Id)
         {
             var publisher =await publisherService.GetPublisherById(Id);
@@ -75,6 +80,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<PublisherDTO>> UpdatePublisher(Guid Id, CreatePublisherRequest request)
         {
             var publisher = await publisherService.GetPublisherById(Id);
@@ -90,6 +96,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeletePublisher(Guid Id)
         {
             var publisher = await publisherService.GetPublisherById(Id);

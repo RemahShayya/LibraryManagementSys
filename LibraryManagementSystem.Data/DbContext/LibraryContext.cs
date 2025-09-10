@@ -1,11 +1,12 @@
-﻿using LibraryManagementSystem.Data.Entities.ImageEntities;
+﻿using LibraryManagementSystem.Data.Entities;
+using LibraryManagementSystem.Data.Entities.ImageEntities;
 using LibraryManagementSystem.Data.Identity;
 using LibraryManagmentSystem.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 namespace LibraryManagmentSystem.Data
 {
-    public class LibraryContext : IdentityDbContext<User>
+    public class LibraryContext : IdentityDbContext<User, Role, string>
     {
         public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
         {
@@ -14,6 +15,17 @@ namespace LibraryManagmentSystem.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+
+            modelBuilder.Entity<BookRentals>()
+                .HasOne(br => br.Book)
+                .WithMany(b => b.BookRentals)
+                .HasForeignKey(br => br.BookId);
+
+            modelBuilder.Entity<BookRentals>()
+                .HasOne(br => br.Customer)
+                .WithMany(u => u.BookRentals)
+                .HasForeignKey(br => br.CustomerId);
 
             modelBuilder.Entity<Book>()
                 .HasOne(b => b.Author)
@@ -58,5 +70,6 @@ namespace LibraryManagmentSystem.Data
         public DbSet<BookCategory> BookCategories { get; set; }
         public DbSet<AuthorImage> AuthorImages { get; set; }
         public DbSet<BookImages> BookImages { get; set; }
+        public DbSet<BookRentals> BookRentals { get; set; }
     }
 }

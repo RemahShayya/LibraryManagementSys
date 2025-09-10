@@ -16,5 +16,6 @@ namespace LibraryManagementSystem.API.Controllers
         [Required]
         [StringLength(15, MinimumLength = 6, ErrorMessage = "Password must be at least 6 and at most 15 characters long!")]
         public string Password { get; set; }
+        public string Role { get; set; }
     }
 }

@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using LibraryManagementSystem.API.Exceptions;
+using LibraryManagementSystem.Data.Entities;
 
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings()
@@ -49,6 +50,7 @@ try
     builder.Services.AddScoped<IPublisherService, PublisherService>();
     builder.Services.AddScoped<IAuthorImageService, AuthorImageService>();
     builder.Services.AddScoped<IBookImageService, BookImagesService>();
+    builder.Services.AddScoped<IBookRentalService, BookRentalService>();
     builder.Services.AddScoped<JWTService>();
     builder.Services.AddScoped<EmailService>();
     builder.Services.AddTransient<GlobalExceptionHandlerMiddleWare>();
@@ -75,8 +77,8 @@ try
         options.Password.RequireNonAlphanumeric = false;
         options.SignIn.RequireConfirmedEmail = true;
     })
-        .AddRoles<IdentityRole>()
-        .AddRoleManager<RoleManager<IdentityRole>>()
+        .AddRoles<Role>()
+        .AddRoleManager<RoleManager<Role>>()
         .AddEntityFrameworkStores<LibraryContext>()
         .AddSignInManager<SignInManager<User>>()
         .AddUserManager<UserManager<User>>()
@@ -94,6 +96,7 @@ try
                 ValidateAudience = false
             };
         });
+
 
     // Add repository pattern
     builder.Services.AddScoped(typeof(ILibraryGenericRepo<>), typeof(LibraryGenericRepo<>));

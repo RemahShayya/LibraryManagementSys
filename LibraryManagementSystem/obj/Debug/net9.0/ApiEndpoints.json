@@ -41,7 +41,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "LibraryManagementSystem.API.DTO.Requests.CreatedLoginRequest",
+        "Type": "LibraryManagementSystem.API.DTO.Requests.CreateLoginRequest",
         "IsRequired": true
       }
     ],
@@ -59,7 +59,7 @@
   },
   {
     "ContainingType": "LibraryManagementSystem.API.Controllers.AccountController",
-    "Method": "register",
+    "Method": "Register",
     "RelativePath": "api/Account/Register",
     "HttpMethod": "POST",
     "IsController": true,
@@ -686,6 +686,117 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "GetAllRentals",
+    "RelativePath": "api/BookRental",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "DeleteRental",
+    "RelativePath": "api/BookRental/{rentalId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rentalId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "UpdateRental",
+    "RelativePath": "api/BookRental/{rentalId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rentalId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "LibraryManagementSystem.API.DTO.Requests.CreateBookRentalRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "GetRentalById",
+    "RelativePath": "api/BookRental/{rentalId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rentalId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "GetCustomerRentalSummary",
+    "RelativePath": "api/BookRental/customer/{email}/summary",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "RentBook",
+    "RelativePath": "api/BookRental/rent",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "LibraryManagementSystem.API.DTO.Requests.CreateBookRentalRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
+    "Method": "ReturnBook",
+    "RelativePath": "api/BookRental/return/{rentalId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rentalId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "LibraryManagementSystem.API.Controllers.CategoryController",

@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using LibraryManagementSystem.API.Services.IServices;
-using LibraryManagmentSystem.Entities;
-using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Data.DTO;
 using LibraryManagementSystem.Data.DTO.Requests;
-
-
+using LibraryManagmentSystem.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagementSystem.API.Controllers
@@ -24,6 +23,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("{Id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<AuthorDTO>> GetAuthor(Guid Id)
         {
             var author =await authorService.GetAuthorById(Id);
@@ -36,7 +36,9 @@ namespace LibraryManagementSystem.API.Controllers
             return Ok(authorDTO);
         }
 
+
         [HttpGet("sorted")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAllAuthorsSorted([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             IEnumerable<Author> authors =await authorService.GetAllAuthors();
@@ -47,6 +49,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("filtered")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthorsFiltered(string? search, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var authors = await authorService.GetAllAuthors();
@@ -63,6 +66,7 @@ namespace LibraryManagementSystem.API.Controllers
             return Ok(authorDTO);
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AuthorDTO>> AddAuthor([FromBody] CreateAuthorRequest request)
         {
             var addedAuthor=mapper.Map<Author>(request);
@@ -77,6 +81,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteAuthor(Guid Id)
         {
             var author=await authorService.GetAuthorById(Id);
@@ -89,6 +94,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<AuthorDTO>> UpdateAuthor(Guid Id, CreateAuthorRequest request)
         {
             var author=await authorService.GetAuthorById(Id);

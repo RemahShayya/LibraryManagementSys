@@ -3,6 +3,7 @@ using LibraryManagementSystem.API.Services.IServices;
 using LibraryManagementSystem.Data.DTO;
 using LibraryManagementSystem.Data.DTO.Requests;
 using LibraryManagmentSystem.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagementSystem.API.Controllers
@@ -21,6 +22,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("{Id}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<CategoryDTO>> GetCategory(Guid Id)
         {
             var category = await categoryService.GetCategoryById(Id);
@@ -32,6 +34,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("sorted")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetAllCategoriesSorted([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var categories = await categoryService.GetAllCategories();
@@ -42,6 +45,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("filtered")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesFiltered(string? search, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var categories = await categoryService.GetAllCategories();
@@ -61,6 +65,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoryDTO>> AddCategory([FromBody] CreateCategoryRequest request)
         {
             var category = mapper.Map<Category>(request);
@@ -75,6 +80,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<CategoryDTO>> UpdateCategory(Guid Id, CreateCategoryRequest request)
         {
             var category = await categoryService.GetCategoryById(Id);
@@ -90,6 +96,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteCategory(Guid Id)
         {
             var category = await categoryService.GetCategoryById(Id);

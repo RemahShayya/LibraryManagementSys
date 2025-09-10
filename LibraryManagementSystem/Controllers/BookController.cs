@@ -4,6 +4,7 @@ using LibraryManagmentSystem.Entities;
 using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Data.DTO;
 using LibraryManagementSystem.Data.DTO.Requests;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LibraryManagementSystem.API.Controllers
 {
@@ -21,6 +22,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles ="Admin, Customer")]
         public async Task<ActionResult<BookDTO>> GetBook(Guid Id)
         {
             var book = await bookService.GetBookById(Id);
@@ -34,6 +36,7 @@ namespace LibraryManagementSystem.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooksSorted([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var books = await bookService.GetAllBooks();
@@ -44,6 +47,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpGet("by-title/{title}")]
+        [Authorize(Roles = "Admin, Customer")]
         public async Task<ActionResult<IEnumerable<BookDTO>>> GetBooksFiltered(string title, [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             var books = await bookService.GetAllBooks();
@@ -60,6 +64,7 @@ namespace LibraryManagementSystem.API.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<BookDTO>> AddBook([FromBody] CreatedBookRequest request)
         {
             var book = mapper.Map<Book>(request);
@@ -72,6 +77,7 @@ namespace LibraryManagementSystem.API.Controllers
 
 
         [HttpPut("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<BookDTO>> UpdateBook(Guid Id, CreatedBookRequest request)
         {
             var bookUpdated = mapper.Map<Book>(request);
@@ -94,6 +100,7 @@ namespace LibraryManagementSystem.API.Controllers
         }
 
         [HttpDelete("{Id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteBook(Guid Id)
         {
             var book = await bookService.GetBookById(Id);
