@@ -72,5 +72,6 @@ namespace LibraryManagmentSystem.Data
         public DbSet<AuthorImage> AuthorImages { get; set; }
         public DbSet<BookImages> BookImages { get; set; }
         public DbSet<BookRentals> BookRentals { get; set; }
+        public DbSet<ReturnedRental> ReturnedRentals { get; set; }
     }
 }

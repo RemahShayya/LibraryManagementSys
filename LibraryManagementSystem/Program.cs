@@ -52,12 +52,14 @@ try
     builder.Services.AddScoped<IBookImageService, BookImagesService>();
     builder.Services.AddScoped<IBookRentalService, BookRentalServices>();
     builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IReturnedRentalService, ReturnedRentalService>();
     builder.Services.AddScoped<JWTService>();
     builder.Services.AddScoped<EmailService>();
     builder.Services.AddTransient<GlobalExceptionHandlerMiddleWare>();
     builder.Services.AddScoped<ImageServiceAuthor>();
     builder.Services.AddScoped<ImageServiceBook>();
     builder.Services.AddScoped<ExcelExportService>();
+    builder.Services.AddScoped <CleanupService>();
 
 
     // Add services to the container

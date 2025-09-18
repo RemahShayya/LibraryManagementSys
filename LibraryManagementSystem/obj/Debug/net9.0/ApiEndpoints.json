@@ -803,16 +803,6 @@
   },
   {
     "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
-    "Method": "ExportRentals",
-    "RelativePath": "api/BookRental/export-rentals",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "LibraryManagementSystem.API.Controllers.BookRentalController",
     "Method": "RentBook",
     "RelativePath": "api/BookRental/rent",
     "HttpMethod": "POST",
@@ -1174,5 +1164,15 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "LibraryManagementSystem.API.Controllers.ReportsController",
+    "Method": "ExportRentals",
+    "RelativePath": "api/Reports/export-rentals",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   }
 ]
